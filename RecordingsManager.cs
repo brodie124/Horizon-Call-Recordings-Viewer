@@ -190,6 +190,15 @@ namespace Horizon_Call_Recordings_Viewer {
             return recordingPaths;
         }
 
+        public bool PlayRecording(Recording recording) {
+            var extractedRecording = ExtractRecordings(new List<Recording>() {recording});
+            if(extractedRecording.Count < 1)
+                return false;
+
+            Process.Start(extractedRecording.First());
+            
+            return true;
+        }
 
         public DataTable CreateDataSet() {
             return CreateDataSet(null);

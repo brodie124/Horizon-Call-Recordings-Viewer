@@ -20,26 +20,17 @@ namespace Horizon_Call_Recordings_Viewer {
         private string _callRecordingsFolder;
 
         private RecordingsManager _recordingsManager;
+        
         private List<Recording> _displayedRecordings;
+        
         private List<Recording> _selectedRecordings;
+
+        private List<Recording> _selectedRecordingsBeforeContext;
+
+        private int _contextMenuActionRow = -1;
 
         public HorizonCallRecordingsViewer(RecordingsManager recordingsManager) {
             InitializeComponent();
-
-            // MOVED TO LoadingScreen.cs
-            // if(string.IsNullOrWhiteSpace(Settings.Default.CallRecordingsSource)) {
-            //     Console.WriteLine("-- Updating CallRecordingsSource to DEFAULT value");
-            //     Settings.Default.CallRecordingsSource = Settings.Default.DefaultCallRecordingsSource;
-            // }
-            //
-            // if(string.IsNullOrWhiteSpace(Settings.Default.CallRecordingsTemp)) {
-            //     Console.WriteLine("-- Updating CallRecordingsTemp to DEFAULT value");
-            //     Settings.Default.CallRecordingsTemp = TempFolder.Directory;
-            //     if(Setup.SetupTempFolder()) {
-            //         Console.WriteLine("Created Temp Dir: " + Settings.Default.CallRecordingsTemp);
-            //     }
-            // }
-
 
             this._recordingsManager = recordingsManager;
             this._recordingsManager.StatusUpdated += RecordingsManagerOnStatusUpdated;
@@ -48,23 +39,17 @@ namespace Horizon_Call_Recordings_Viewer {
 
             //Set the date format for the date-based pickers
             this.dateFromDatePicker.Format = this.dateToDatePicker.Format = DateTimePickerFormat.Long;
-            // this.dateFromDatePicker.CustomFormat = this.dateToDatePicker.CustomFormat = "dd/mm/yyyy";
-            // this.dateFromDatePicker.ShowUpDown = this.dateToDatePicker.ShowUpDown = true;
-
-
+            
             //Set the date format for the time-based pickers
             this.timeFromDatePicker.Format = this.timeToDatePicker.Format = DateTimePickerFormat.Custom;
             this.timeFromDatePicker.CustomFormat = this.timeToDatePicker.CustomFormat = "HH:mm";
             this.timeFromDatePicker.ShowUpDown = this.timeToDatePicker.ShowUpDown = true;
-
 
             if(!string.IsNullOrWhiteSpace(Settings.Default.CallRecordingsSource)) {
                 this._callRecordingsFolder = Settings.Default.CallRecordingsSource;
                 ShowCallRecordings();
             }
 
-
-            Math.Floor(1.32);
         }
 
         private void RecordingsManagerOnStatusUpdated(int total, int loaded, bool isNewFile) {
@@ -100,27 +85,8 @@ namespace Horizon_Call_Recordings_Viewer {
                 Recording.RecordingDirection.OUTBOUND
             );
 
-
-            // int i = 0;
-            // foreach (DataGridViewRow row in this.resultsGridView.Rows) {
-            //     var checkBoxCell = (DataGridViewCheckBoxCell) row.Cells[0];
-            //
-            //     // this.
-            //
-            //     i++;
-            // }
-
             MergeSelectedRecordings(filteredList);
-            
             UpdateDataGridView(filteredList);
-            // foreach (DataGridViewColumn column in this.resultsGridView.Columns) {
-            //     if (column.HeaderText.ToLower().Equals("selected"))
-            //         continue;
-            //
-            //     column.CellTemplate.
-            //     break;
-            // }
-            // this.dataGridView1.Refresh();
         }
 
         private void ControlStatusCheckBox_CheckedChanged(object sender, EventArgs e) {
@@ -188,15 +154,15 @@ namespace Horizon_Call_Recordings_Viewer {
                 var indexOf = this._selectedRecordings.IndexOf(recording);
                 if(indexOf != -1) {
                     this._selectedRecordings[indexOf].IsSelected = cellValue;
-                } else {
-                    if(cellValue) {
-                        recording.IsSelected = true;
-                        this._selectedRecordings.Add(recording);
-                    }
+
+                    if(!cellValue)
+                        this._selectedRecordings.RemoveAt(indexOf);
+                } else if(cellValue) {
+                    recording.IsSelected = true;
+                    this._selectedRecordings.Add(recording);
                 }
             }
-
-
+            
             UpdateSelectedToolStrip();
         }
 
@@ -229,7 +195,6 @@ namespace Horizon_Call_Recordings_Viewer {
 
         private void resultsGridView_CellContentClick(object sender, DataGridViewCellEventArgs e) {
             var senderGrid = (DataGridView) sender;
-
 
             if(e.ColumnIndex == GetColumnIndex(RecordingsManager.Columns.Selected) && e.RowIndex >= 0) {
                 senderGrid.EndEdit();
@@ -387,37 +352,52 @@ namespace Horizon_Call_Recordings_Viewer {
             var selectedColIndex = GetColumnIndex(RecordingsManager.Columns.Selected);
             var indexColIndex = GetColumnIndex(RecordingsManager.Columns.Index);
             
+            var updateInterval = this.resultsGridView.Rows.Count * 0.05;
+            var updateCounter = 0;
             for (var i = 0; i < this.resultsGridView.Rows.Count; i++) {
                 var recordingIndex = (int) this.resultsGridView.Rows[i].Cells[indexColIndex].Value;
                 var recording = GetRecording(recordingIndex);
                 
                 this.resultsGridView.Rows[i].Cells[selectedColIndex].Value = true;
+                if(this._selectedRecordings.IndexOf(recording) == -1)
+                    this._selectedRecordings.Add(recording);
 
-                // if(!this._selectedRecordings.Contains(recording))
-                    // this._selectedRecordings.Add(this._displayedRecordings[i]);
-                // this.resultsGridView_CellContentClick(this.resultsGridView, new DataGridViewCellEventArgs(colIndex, i));
+                updateCounter++;
+                if(updateCounter >= updateInterval) {
+                    updateCounter = 0;
+                    
+                    this.Update();
+                    UpdateSelectedToolStrip();
+                }
             }
-
-            this.UpdateSelectedRecordings();
+            
+            this.UpdateSelectedToolStrip();
         }
 
         private void selectNoneToolStripMenuItem_Click(object sender, EventArgs e) {
             var selectedColIndex = GetColumnIndex(RecordingsManager.Columns.Selected);
+            var listIndexColIndex = GetColumnIndex(RecordingsManager.Columns.Index);
             
-            for (var i = 0; i < this._selectedRecordings.Count; i++) {
-                var selectedRecording = this._selectedRecordings[i];
+            for (var i = 0; i < this.resultsGridView.Rows.Count; i++) {
+                var isSelected = (bool) this.resultsGridView.Rows[i].Cells[selectedColIndex].Value;
+                if(!isSelected)
+                    continue;
 
-                var indexOf = 0;
-                if((indexOf = _displayedRecordings.IndexOf(selectedRecording)) != -1) {
-                    this.resultsGridView.Rows[indexOf].Cells[selectedColIndex].Value = false;
-                    selectedRecording.IsSelected = false;
-                }
+                var listIndexColValue = this.resultsGridView.Rows[i].Cells[listIndexColIndex].Value;
+                if(!(listIndexColIndex is int))
+                    continue;
 
-                this._selectedRecordings.RemoveAt(i);
-                i--;
+                var listIndex = (int) this.resultsGridView.Rows[i].Cells[listIndexColIndex].Value;
+
+                if(listIndex < 0)
+                    continue;
+
+                var recording = this.GetRecording(listIndex);
+                this._selectedRecordings.Remove(recording);
+
+                this.resultsGridView.Rows[i].Cells[selectedColIndex].Value = false;
             }
-
-            //
+            
             UpdateSelectedToolStrip();
         }
 
@@ -456,11 +436,19 @@ namespace Horizon_Call_Recordings_Viewer {
         }
 
         private void exportSingleToolStripMenuItem_Click(object sender, EventArgs e) {
-            var extractedRecordings = this._recordingsManager.ExtractRecordings(this._selectedRecordings);
+            var recordingsToExport = this.GetSelectedRecordings();
+            if(recordingsToExport.Count < 1) {
+                MessageBox.Show("At least one recording must be selected!", "Horizon: Call Recordings Viewer",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                
+                return;
+            }
+            
+            var extractedRecordings = this._recordingsManager.ExtractRecordings(recordingsToExport);
             var failMessage = "";
 
-
-            if(this._selectedRecordings.Count > 1) {
+            
+            if(recordingsToExport.Count > 1) {
                 //Handle multiple recordings
                 var folderDialog = new FolderBrowserDialog();
 
@@ -485,7 +473,7 @@ namespace Horizon_Call_Recordings_Viewer {
                         failMessage += "Failed to extract " + recordingFileName + "\n";
                     }
                 }
-            } else if(this._selectedRecordings.Count > 0) {
+            } else if(recordingsToExport.Count == 1) {
                 //Handle single recording
                 var saveDialog = new SaveFileDialog();
                 saveDialog.Filter = "MP3 (*.mp3)|*.mp3";
@@ -524,24 +512,58 @@ namespace Horizon_Call_Recordings_Viewer {
         }
 
         private void playSelectedFileToolStripMenuItem_Click(object sender, EventArgs e) {
-            if(this._selectedRecordings.Count != 1) {
-                this.playSelectedFileToolStripMenuItem.Enabled = false;
+            var recordings = this.GetSelectedRecordings();
+            if(recordings.Count != 1) {
                 MessageBox.Show("One call recording must be selected.", "Horizon: Call Recordings Viewer",
                     MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
 
                 return;
             }
-            
-            // extract the file to the temporary location
-            var extractedRecordings = this._recordingsManager.ExtractRecordings(this._selectedRecordings);
-            if(extractedRecordings.Count < 1) {
+
+            var playResult = _recordingsManager.PlayRecording(recordings.First());
+            if(!playResult) {
                 MessageBox.Show("An error was encountered whilst extracting the recording.",
                     "Horizon: Call Recordings Viewer", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                 return;
             }
+        }
 
-            // open the file using the default program
-            Process.Start(extractedRecordings.First());
+        private void resultsGridView_CellMouseUp(object sender, DataGridViewCellMouseEventArgs e) {
+            // if the click type was not a right-click then ignore it
+            if(e.Button != MouseButtons.Right)
+                return;
+            
+            // if the user has not right-clicked a row then ignore it
+            if(e.RowIndex < 0)
+                return;
+
+            this.resultsGridView.Rows[e.RowIndex].Selected = true;
+
+            this._contextMenuActionRow = e.RowIndex;
+            this.resultsGridContextMenuStrip.Show(this, this.PointToClient(Cursor.Position));
+        }
+
+        private List<Recording> GetSelectedRecordings() {
+            if(this._contextMenuActionRow >= 0) {
+                var indexCellValue = (int) this.resultsGridView.Rows[this._contextMenuActionRow]
+                    .Cells[GetColumnIndex(RecordingsManager.Columns.Index)].Value;
+
+                var recording = GetRecording(indexCellValue);
+                return new List<Recording>() {recording};
+            }
+                
+            return this._selectedRecordings;
+        }
+
+        private void playSelectedFileContextMenuToolStrip_Click(object sender, EventArgs e) {
+            playSelectedFileToolStripMenuItem_Click(this, EventArgs.Empty);
+            this._contextMenuActionRow = -1;
+        }
+
+
+        private void exportSelectedFileContextMenuToolStrip_Click(object sender, EventArgs e) {
+            exportSingleToolStripMenuItem_Click(this, EventArgs.Empty);
+            this._contextMenuActionRow = -1;
         }
     }
 }

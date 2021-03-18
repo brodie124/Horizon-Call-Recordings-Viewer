@@ -53,28 +53,27 @@ namespace Horizon_Call_Recordings_Viewer {
             this._totalRecordingsLoaded += (this._currentZipLoaded - this._currentZipPreviousLoaded);
 
             this.loadedLabel.Text = $"Loaded: {this._totalRecordingsToLoad} / {this._totalRecordingsToLoad}";
-
-            // this.loadedProgressBar.Minimum = 0;
-            // this.loadedProgressBar.Maximum = total; // this._totalRecordingsToLoad;
-            // this.loadedProgressBar.Value = loaded; //this._totalRecordingsToLoad;
         }
 
         private async void LoadingScreen_Load(object sender, EventArgs e) {
             if(!string.IsNullOrWhiteSpace(Settings.Default.CallRecordingsSource)) {
                 await Task.Run(() => {
                     this._recordingsManager.ImportRecordings(Settings.Default.CallRecordingsSource);
+
                 });
             }
 
             this._recordingsManager.StatusUpdated -= RecordingsManagerOnStatusUpdated;
 
-            this.Hide();
-
+            this.loadedLabel.Text = "Loading Viewer";
+            this.loadedProgressBar.Style = ProgressBarStyle.Blocks;
+            this.Update();
 
             var callViewer = new HorizonCallRecordingsViewer(this._recordingsManager);
-            callViewer.ShowDialog();
+            callViewer.Closed += (s, args) => this.Close();
+            callViewer.Shown += (s, args) => this.Hide();
 
-            this.Close();
+            callViewer.Show();
         }
     }
 }

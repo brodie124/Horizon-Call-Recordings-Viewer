@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Globalization;
 using System.IO;
@@ -169,6 +170,8 @@ namespace Horizon_Call_Recordings_Viewer {
                 this.exportSingleToolStripMenuItem.Enabled = false;
             }
             
+            // only enable the "Play Selected File" menu item if we have exactly one item selected
+            this.playSelectedFileToolStripMenuItem.Enabled = (this._selectedRecordings.Count == 1);
         }
 
         private void UpdateSelectedRecordings() {
@@ -518,6 +521,27 @@ namespace Horizon_Call_Recordings_Viewer {
 
         private void showAllToolStripMenuItem_Click(object sender, EventArgs e) {
             UpdateDataGridView(null);
+        }
+
+        private void playSelectedFileToolStripMenuItem_Click(object sender, EventArgs e) {
+            if(this._selectedRecordings.Count != 1) {
+                this.playSelectedFileToolStripMenuItem.Enabled = false;
+                MessageBox.Show("One call recording must be selected.", "Horizon: Call Recordings Viewer",
+                    MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+
+                return;
+            }
+            
+            // extract the file to the temporary location
+            var extractedRecordings = this._recordingsManager.ExtractRecordings(this._selectedRecordings);
+            if(extractedRecordings.Count < 1) {
+                MessageBox.Show("An error was encountered whilst extracting the recording.",
+                    "Horizon: Call Recordings Viewer", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
+            }
+
+            // open the file using the default program
+            Process.Start(extractedRecordings.First());
         }
     }
 }

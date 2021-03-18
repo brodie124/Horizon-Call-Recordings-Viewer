@@ -91,8 +91,8 @@ namespace Horizon_Call_Recordings_Viewer {
                 dateTo = DateTime.MinValue;
 
             var filteredList = this._recordingsManager.Filter(
-                SanitiseNumber(this.callerNumberTextbox.Text),
-                SanitiseNumber(this.recipientNumberTextbox.Text),
+                Recording.SanitiseNumber(this.callerNumberTextbox.Text),
+                Recording.SanitiseNumber(this.recipientNumberTextbox.Text),
                 dateFrom, dateTo,
                 (this.callerDirectionBothRadioButton.Checked) ? Recording.RecordingDirection.BOTH :
                 (this.callerDirectionInboundRadioButton.Checked) ? Recording.RecordingDirection.INBOUND :
@@ -168,6 +168,7 @@ namespace Horizon_Call_Recordings_Viewer {
                 this.exportToolStripMenuItem.Enabled = false;
                 this.exportSingleToolStripMenuItem.Enabled = false;
             }
+            
         }
 
         private void UpdateSelectedRecordings() {
@@ -204,10 +205,6 @@ namespace Horizon_Call_Recordings_Viewer {
                 if((indexOf = this._selectedRecordings.IndexOf(newRecording)) != -1)
                     newRecording.IsSelected = this._selectedRecordings[indexOf].IsSelected;
             }
-        }
-
-        public string SanitiseNumber(string number) {
-            return number;
         }
 
         private int GetColumnIndex(string headerText) {
@@ -266,7 +263,7 @@ namespace Horizon_Call_Recordings_Viewer {
         }
 
 
-        private void callerSelectionDialogBuutton_Click(object sender, EventArgs e) {
+        private void callerSelectionDialogButton_Click(object sender, EventArgs e) {
             var selectPersonDialog = new SelectPersonDialog();
 
             var dialogResult = selectPersonDialog.ShowDialog();
@@ -521,14 +518,6 @@ namespace Horizon_Call_Recordings_Viewer {
 
         private void showAllToolStripMenuItem_Click(object sender, EventArgs e) {
             UpdateDataGridView(null);
-        }
-
-        private void showAllToolStripMenuItem_Click_1(object sender, EventArgs e) {
-            throw new System.NotImplementedException();
-        }
-
-        private void showAllToolStripMenuItem_Click_2(object sender, EventArgs e) {
-            throw new System.NotImplementedException();
         }
     }
 }

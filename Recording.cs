@@ -110,6 +110,8 @@ namespace Horizon_Call_Recordings_Viewer {
                 else if (!this.CallerNumber.StartsWith("0")) {
                     this.CallerNumber = "0" + this.CallerNumber;
                 }
+
+                this.CallerNumber = Recording.SanitiseNumber(this.CallerNumber);
             }
 
             if (this.RecipientNumber != null) {
@@ -119,7 +121,14 @@ namespace Horizon_Call_Recordings_Viewer {
                 else if (!this.RecipientNumber.StartsWith("0")) {
                     this.RecipientNumber = "0" + this.RecipientNumber;
                 }
+
+                this.RecipientNumber = Recording.SanitiseNumber(this.RecipientNumber);
             }
+        }
+
+        public static string SanitiseNumber(string number) {
+            // remove all spaces present in the number
+            return number.Replace(" ", "");
         }
 
         public enum RecordingDirection {

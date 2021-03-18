@@ -24,6 +24,7 @@
         /// the contents of this method with the code editor.
         /// </summary>
         private void InitializeComponent() {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(HorizonCallRecordingsViewer));
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButton1 = new System.Windows.Forms.ToolStripDropDownButton();
@@ -75,11 +76,15 @@
             this.miniToolStrip = new System.Windows.Forms.StatusStrip();
             this.statusToolStripLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.versionStatusStripLabel = new System.Windows.Forms.ToolStripStatusLabel();
+            this.resultsGridContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.playSelectedFileContextMenuToolStrip = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportSelectedFileContextMenuToolStrip = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize) (this.resultsGridView)).BeginInit();
             this.resultsPanel.SuspendLayout();
             this.directionPanel.SuspendLayout();
             this.miniToolStrip.SuspendLayout();
+            this.resultsGridContextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // toolStrip1
@@ -252,12 +257,14 @@
             this.resultsGridView.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.resultsGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.resultsGridView.Location = new System.Drawing.Point(12, 195);
+            this.resultsGridView.MultiSelect = false;
             this.resultsGridView.Name = "resultsGridView";
-            this.resultsGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
+            this.resultsGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.resultsGridView.Size = new System.Drawing.Size(585, 347);
             this.resultsGridView.TabIndex = 2;
             this.resultsGridView.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.resultsGridView_CellContentClick);
             this.resultsGridView.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.resultsGridView_CellEndEdit);
+            this.resultsGridView.CellMouseUp += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.resultsGridView_CellMouseUp);
             // 
             // resultsPanel
             // 
@@ -518,10 +525,30 @@
             // 
             this.versionStatusStripLabel.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.versionStatusStripLabel.Name = "versionStatusStripLabel";
-            this.versionStatusStripLabel.Size = new System.Drawing.Size(558, 17);
+            this.versionStatusStripLabel.Size = new System.Drawing.Size(527, 17);
             this.versionStatusStripLabel.Spring = true;
-            this.versionStatusStripLabel.Text = "v1.1";
+            this.versionStatusStripLabel.Text = "v1.2";
             this.versionStatusStripLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // resultsGridContextMenuStrip
+            // 
+            this.resultsGridContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {this.playSelectedFileContextMenuToolStrip, this.exportSelectedFileContextMenuToolStrip});
+            this.resultsGridContextMenuStrip.Name = "contextMenuStrip1";
+            this.resultsGridContextMenuStrip.Size = new System.Drawing.Size(166, 48);
+            // 
+            // playSelectedFileContextMenuToolStrip
+            // 
+            this.playSelectedFileContextMenuToolStrip.Name = "playSelectedFileContextMenuToolStrip";
+            this.playSelectedFileContextMenuToolStrip.Size = new System.Drawing.Size(165, 22);
+            this.playSelectedFileContextMenuToolStrip.Text = "Play Recording";
+            this.playSelectedFileContextMenuToolStrip.Click += new System.EventHandler(this.playSelectedFileContextMenuToolStrip_Click);
+            // 
+            // exportSelectedFileContextMenuToolStrip
+            // 
+            this.exportSelectedFileContextMenuToolStrip.Name = "exportSelectedFileContextMenuToolStrip";
+            this.exportSelectedFileContextMenuToolStrip.Size = new System.Drawing.Size(165, 22);
+            this.exportSelectedFileContextMenuToolStrip.Text = "Export Recording";
+            this.exportSelectedFileContextMenuToolStrip.Click += new System.EventHandler(this.exportSelectedFileContextMenuToolStrip_Click);
             // 
             // HorizonCallRecordingsViewer
             // 
@@ -545,8 +572,15 @@
             this.directionPanel.ResumeLayout(false);
             this.miniToolStrip.ResumeLayout(false);
             this.miniToolStrip.PerformLayout();
+            this.resultsGridContextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
         }
+
+        private System.Windows.Forms.ToolStripMenuItem exportSelectedFileContextMenuToolStrip;
+
+        private System.Windows.Forms.ToolStripMenuItem playSelectedFileContextMenuToolStrip;
+
+        private System.Windows.Forms.ContextMenuStrip resultsGridContextMenuStrip;
 
         private System.Windows.Forms.Button callerSelectionDialogButton;
 

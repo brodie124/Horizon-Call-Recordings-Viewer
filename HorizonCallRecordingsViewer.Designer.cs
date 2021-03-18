@@ -42,12 +42,14 @@
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.exportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exportSingleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.playSelectedFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
             this.extractToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cleanUpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.resultsGridView = new System.Windows.Forms.DataGridView();
             this.resultsPanel = new System.Windows.Forms.Panel();
-            this.callerSelectionDialogBuutton = new System.Windows.Forms.Button();
+            this.callerSelectionDialogButton = new System.Windows.Forms.Button();
             this.dateToCheckBox = new System.Windows.Forms.CheckBox();
             this.timeToCheckBox = new System.Windows.Forms.CheckBox();
             this.timeFromCheckBox = new System.Windows.Forms.CheckBox();
@@ -143,7 +145,7 @@
             // selectedToolStripDropDown
             // 
             this.selectedToolStripDropDown.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.selectedToolStripDropDown.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {this.selectAllToolStripMenuItem, this.selectNoneToolStripMenuItem, this.toolStripSeparator4, this.showAllToolStripMenuItem, this.viewToolStripMenuItem, this.toolStripSeparator1, this.exportToolStripMenuItem, this.exportSingleToolStripMenuItem});
+            this.selectedToolStripDropDown.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {this.selectAllToolStripMenuItem, this.selectNoneToolStripMenuItem, this.toolStripSeparator4, this.showAllToolStripMenuItem, this.viewToolStripMenuItem, this.toolStripSeparator1, this.exportToolStripMenuItem, this.exportSingleToolStripMenuItem, this.toolStripSeparator5, this.playSelectedFileToolStripMenuItem});
             this.selectedToolStripDropDown.Image = ((System.Drawing.Image) (resources.GetObject("selectedToolStripDropDown.Image")));
             this.selectedToolStripDropDown.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.selectedToolStripDropDown.Name = "selectedToolStripDropDown";
@@ -202,6 +204,19 @@
             this.exportSingleToolStripMenuItem.Text = "Export Audio File";
             this.exportSingleToolStripMenuItem.Click += new System.EventHandler(this.exportSingleToolStripMenuItem_Click);
             // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(175, 6);
+            // 
+            // playSelectedFileToolStripMenuItem
+            // 
+            this.playSelectedFileToolStripMenuItem.Enabled = false;
+            this.playSelectedFileToolStripMenuItem.Name = "playSelectedFileToolStripMenuItem";
+            this.playSelectedFileToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.playSelectedFileToolStripMenuItem.Text = "Play Selected File";
+            this.playSelectedFileToolStripMenuItem.Click += new System.EventHandler(this.playSelectedFileToolStripMenuItem_Click);
+            // 
             // toolStripDropDownButton1
             // 
             this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
@@ -246,7 +261,7 @@
             // 
             // resultsPanel
             // 
-            this.resultsPanel.Controls.Add(this.callerSelectionDialogBuutton);
+            this.resultsPanel.Controls.Add(this.callerSelectionDialogButton);
             this.resultsPanel.Controls.Add(this.dateToCheckBox);
             this.resultsPanel.Controls.Add(this.timeToCheckBox);
             this.resultsPanel.Controls.Add(this.timeFromCheckBox);
@@ -274,15 +289,15 @@
             this.resultsPanel.Size = new System.Drawing.Size(612, 591);
             this.resultsPanel.TabIndex = 4;
             // 
-            // callerSelectionDialogBuutton
+            // callerSelectionDialogButton
             // 
-            this.callerSelectionDialogBuutton.Location = new System.Drawing.Point(244, 97);
-            this.callerSelectionDialogBuutton.Name = "callerSelectionDialogBuutton";
-            this.callerSelectionDialogBuutton.Size = new System.Drawing.Size(30, 20);
-            this.callerSelectionDialogBuutton.TabIndex = 26;
-            this.callerSelectionDialogBuutton.Text = "...";
-            this.callerSelectionDialogBuutton.UseVisualStyleBackColor = true;
-            this.callerSelectionDialogBuutton.Click += new System.EventHandler(this.callerSelectionDialogBuutton_Click);
+            this.callerSelectionDialogButton.Location = new System.Drawing.Point(244, 97);
+            this.callerSelectionDialogButton.Name = "callerSelectionDialogButton";
+            this.callerSelectionDialogButton.Size = new System.Drawing.Size(30, 20);
+            this.callerSelectionDialogButton.TabIndex = 26;
+            this.callerSelectionDialogButton.Text = "...";
+            this.callerSelectionDialogButton.UseVisualStyleBackColor = true;
+            this.callerSelectionDialogButton.Click += new System.EventHandler(this.callerSelectionDialogButton_Click);
             // 
             // dateToCheckBox
             // 
@@ -533,6 +548,11 @@
             this.ResumeLayout(false);
         }
 
+        private System.Windows.Forms.Button callerSelectionDialogButton;
+
+        private System.Windows.Forms.ToolStripMenuItem playSelectedFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+
         private System.Windows.Forms.StatusStrip miniToolStrip;
 
         private System.Windows.Forms.ToolStripMenuItem showAllToolStripMenuItem;
@@ -555,8 +575,6 @@
 
         private System.Windows.Forms.ToolStripMenuItem selectCallRecordingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-
-        private System.Windows.Forms.Button callerSelectionDialogBuutton;
 
         private System.Windows.Forms.ToolStripDropDownButton selectedToolStripDropDown;
 
